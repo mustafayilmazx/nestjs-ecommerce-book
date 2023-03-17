@@ -5,31 +5,25 @@
 // products array includes {product,price}, required and reference to the product schema
 // status enum, required and default value is 'pending'
 
-import { Type } from 'class-transformer';
 import {
   IsEnum,
-  IsFloat,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { AddressDto } from './address.dto';
-import { ProductDto } from './product.dto';
-
 export class CreateOrderDto {
   @IsNotEmpty()
-  @IsFloat()
+  @IsNumber()
   totalPrice: number;
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => AddressDto)
-  address: AddressDto;
+  address: string;
 
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => ProductDto)
-  products: ProductDto[];
+  products: string[];
 
   @IsOptional()
   @IsEnum(['pending', 'paid', 'shipped', 'delivered'])

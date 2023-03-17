@@ -12,8 +12,12 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    return {
+      username: 'test',
+      password: '$2a$10$AYH.XyYJe4zI96rYM.Qeze3uLTKaCD62Rsg8qWYAXdMz7EGWTn5ei',
+      userId: 1,
+    };
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
