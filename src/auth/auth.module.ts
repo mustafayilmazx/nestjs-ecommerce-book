@@ -3,8 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { User, UserSchema } from '../users/schemas/user.schema';
-import { UsersModule } from '../users/users.module';
+import { User, UserSchema } from '@schemas/user';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -12,7 +11,6 @@ import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
-    UsersModule,
     PassportModule,
     ConfigModule, // import the ConfigModule here
     JwtModule.registerAsync({
@@ -25,10 +23,7 @@ import { LocalStrategy } from './strategies/local.strategy';
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature(
-      [{ name: User.name, schema: UserSchema }],
-      new ConfigService().get<string>('MONGO_DB_NAME' || 'nest'),
-    ),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],

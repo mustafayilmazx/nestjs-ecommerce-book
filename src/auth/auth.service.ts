@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
+import { User } from '@schemas/user';
 import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
-import { User } from '../users/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -12,20 +12,25 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.userModel.findOne({ username });
-    const isMatch = await bcrypt.compare(pass, user.password);
-    if (user && isMatch) {
-      const { password, ...result } = user;
-      return result;
+  async validateUser(email: string, pass: string): Promise<User> {
+    const user = await this.userModel.findOne({ email });
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      return user;
     }
     return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  async createToken(user: User): Promise<{ access_token: string }> {
+    const payload = { userId: user._id, email: user.email };
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: await this.jwtService.sign(payload),
+    };
+  }
+
+  async login(user: User) {
+    const payload = { userId: user._id, email: user.email };
+    return {
+      access_token: await this.jwtService.sign(payload),
     };
   }
 }

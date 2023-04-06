@@ -5,5 +5,9 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@schemas(.*)$": "/src/common/schemas/$1",
+    "^@dtos/(.*$)": "/src/common/dtos/$1"
   }
 }

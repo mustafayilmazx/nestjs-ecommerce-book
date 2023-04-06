@@ -35,6 +35,13 @@ export class Address extends Document {
   @Prop({ required: true })
   @IsString()
   surname: string;
+
+  @Prop({ required: true })
+  @IsString()
+  ownerId: string;
+
+  @Prop({ required: false })
+  isDeleted: boolean;
 }
 
 export const AddressSchema = SchemaFactory.createForClass(Address);
