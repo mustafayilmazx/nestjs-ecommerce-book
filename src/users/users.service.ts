@@ -42,6 +42,7 @@ export class UsersService {
   ): Promise<{ access_token: string }> {
     const { oldPassword, newPassword } = changePasswordDto;
     const user = await this.userModel.findById(userData.userId);
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
