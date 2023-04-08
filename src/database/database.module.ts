@@ -8,7 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+        uri: 'mongodb+srv://no7offical:3B4u84FQQrzxKPeY@ecommerce.qfuprow.mongodb.net/book-ecommerce?retryWrites=true&w=majority',
         useNewUrlParser: true,
         useUnifiedTopology: true,
       }),
