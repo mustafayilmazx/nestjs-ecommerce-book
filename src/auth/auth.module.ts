@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
@@ -12,16 +11,9 @@ import { LocalStrategy } from './strategies/local.strategy';
 @Module({
   imports: [
     PassportModule,
-    ConfigModule, // import the ConfigModule here
-    JwtModule.registerAsync({
-      imports: [ConfigModule], // add this to use ConfigService in JwtModule
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES') || '3600s',
-        },
-      }),
-      inject: [ConfigService],
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRE },
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],

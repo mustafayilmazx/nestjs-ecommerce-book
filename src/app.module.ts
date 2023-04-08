@@ -5,9 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
+import { DatabaseModule } from './database/database.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
-import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -16,9 +16,7 @@ import { DatabaseModule } from './database/database.module';
     AddressModule,
     AuthModule,
     CartModule,
-    ConfigModule.forRoot({
-      isGlobal: true, // make configService available globally
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
   ],
   controllers: [AppController],
