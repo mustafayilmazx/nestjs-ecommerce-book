@@ -1,4 +1,6 @@
+import { ERROR_MESSAGES } from '@consts/error-messages';
 import { ChangePasswordDto, CreateUserDto } from '@dtos/user';
+import { comparePasswords, hashPassword } from '@helpers/password-helper';
 import {
   ConflictException,
   Injectable,
@@ -7,59 +9,82 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '@schemas/user';
-import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
-import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    private authService: AuthService,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async createUser(
-    createUserDto: CreateUserDto,
-  ): Promise<{ access_token: string }> {
+  public async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { email, password } = createUserDto;
 
     if (await this.isUserExist(email)) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException(ERROR_MESSAGES.USER_ALREADY_EXISTS);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
+
     const user = await this.userModel.create({
       ...createUserDto,
       password: hashedPassword,
     });
-    // TODO return user instead of token
-    return await this.authService.createToken(user);
+
+    return user;
   }
 
-  async changePassword(
+  public async changePassword(
     changePasswordDto: ChangePasswordDto,
-    userData: { userId: string; email: string },
-  ): Promise<{ access_token: string }> {
+    { userId },
+  ): Promise<any> {
     const { oldPassword, newPassword } = changePasswordDto;
-    const user = await this.userModel.findById(userData.userId);
+    const user = await this.getOneById(userId);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
-    if (!(await bcrypt.compare(oldPassword, user.password))) {
-      throw new UnauthorizedException('Wrong password');
-    }
+    await this.checkOldPasswordOrFail(oldPassword, user.password);
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await hashPassword(newPassword);
     user.password = hashedPassword;
     await user.save();
 
-    return await this.authService.createToken(user);
+    // return user without password
+    return {
+      id: user.id,
+      email: user.email,
+      firstName: user.name,
+      lastName: user.lname,
+      phone: user.phone,
+    };
+  }
+
+  private async checkOldPasswordOrFail(
+    oldPassword: string,
+    currentPassword: string,
+  ): Promise<void> {
+    const isOldPasswordCorrect = await comparePasswords(
+      oldPassword,
+      currentPassword,
+    );
+
+    if (!isOldPasswordCorrect) {
+      throw new UnauthorizedException(ERROR_MESSAGES.WRONG_OLD_PASSWORD);
+    }
   }
 
   private async isUserExist(email: string): Promise<boolean> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.getOne({ email });
     return !!user;
+  }
+
+  private async getOne(filters: any): Promise<User> {
+    const user = await this.userModel.findOne(filters);
+    return user;
+  }
+
+  private async getOneById(id: string): Promise<User> {
+    const user = await this.getOne({ _id: id });
+    return user;
   }
 }
