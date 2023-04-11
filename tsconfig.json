@@ -20,8 +20,9 @@
     "paths": {
       "@schemas/*": ["src/common/schemas/*"],
       "@dtos/*": ["src/common/dtos/*"],
-      "@consts/*": ["src/common/consts/*"],
-      "@helpers/*": ["src/common/helpers/*"]
+      "@consts/*": ["src/common/constants/*"],
+      "@helpers/*": ["src/common/helpers/*"],
+      "@interceptors/*": ["src/common/interceptors/*"]
     }
   }
 }

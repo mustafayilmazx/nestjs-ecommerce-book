@@ -8,6 +8,7 @@ import { CartModule } from './cart/cart.module';
 import { DatabaseModule } from './database/database.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
+import { SeederModule } from './seeder/seeder.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from './users/users.module';
     CartModule,
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],

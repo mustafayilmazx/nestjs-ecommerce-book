@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from '@consts/error-messages';
+import { ERROR_MESSAGES } from '@consts/index';
 import { CreateAddressDto, UpdateAddressDto } from '@dtos/address';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';

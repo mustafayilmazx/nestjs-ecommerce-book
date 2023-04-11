@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES } from '@consts/error-messages';
+import { ERROR_MESSAGES } from '@consts/index';
 import { ChangePasswordDto, CreateUserDto } from '@dtos/user';
 import { comparePasswords, hashPassword } from '@helpers/password-helper';
 import {
