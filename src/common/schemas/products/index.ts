@@ -1,1 +1,1 @@
-export * from './book.schema';
+export * from './product.schema';

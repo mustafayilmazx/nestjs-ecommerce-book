@@ -10,7 +10,7 @@ async function bootstrap() {
     const seederService = app.get(SeederService);
     await seederService.seed();
   }
-
+  console.log(`${process.env.JWT_EXPIRE}`);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT || 8080, '0.0.0.0');
 
