@@ -1,5 +1,12 @@
-import { ChangePasswordDto, CreateUserDto } from '@dtos/user';
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ChangePasswordDto, CreateUserDto } from '@dtos/index';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 
@@ -13,6 +20,7 @@ export class UsersController {
   }
 
   @Post('/change-password')
+  @HttpCode(200)
   @UseGuards(AuthGuard('jwt'))
   public async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,

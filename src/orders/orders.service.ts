@@ -1,4 +1,4 @@
-import { CreateOrderDto, UpdateOrderDto } from '@dtos/order';
+import { CreateOrderDto, UpdateOrderDto } from '@dtos/index';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

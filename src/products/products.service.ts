@@ -20,7 +20,7 @@ export class ProductService {
     return product;
   }
 
-  async getMany(productIds: string[]): Promise<Product[]> {
+  public async getMany(productIds: string[]): Promise<Product[]> {
     const products = await this.productModel.find({
       _id: { $in: productIds },
     });

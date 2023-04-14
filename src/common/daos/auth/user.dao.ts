@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class User {
+export class UserDao {
   @Expose({ name: '_id' })
   id: string;
 

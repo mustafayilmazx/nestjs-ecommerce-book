@@ -1,11 +1,11 @@
-import { ERROR_MESSAGES } from '@consts/index';
-import { ChangePasswordDto, CreateUserDto } from '@dtos/user';
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@consts/index';
+import { ChangePasswordDto, CreateUserDto } from '@dtos/index';
 import { comparePasswords, hashPassword } from '@helpers/password-helper';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '@schemas/user';
@@ -15,7 +15,7 @@ import { Model } from 'mongoose';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  public async createUser(createUserDto: CreateUserDto): Promise<User> {
+  public async createUser(createUserDto: CreateUserDto): Promise<string> {
     const { email, password } = createUserDto;
 
     if (await this.isUserExist(email)) {
@@ -24,18 +24,18 @@ export class UsersService {
 
     const hashedPassword = await hashPassword(password);
 
-    const user = await this.userModel.create({
+    await this.userModel.create({
       ...createUserDto,
       password: hashedPassword,
     });
 
-    return user;
+    return SUCCESS_MESSAGES.USER_CREATED;
   }
 
   public async changePassword(
     changePasswordDto: ChangePasswordDto,
     { userId },
-  ): Promise<any> {
+  ): Promise<string> {
     const { oldPassword, newPassword } = changePasswordDto;
     const user = await this.getOneById(userId);
 
@@ -49,14 +49,7 @@ export class UsersService {
     user.password = hashedPassword;
     await user.save();
 
-    // return user without password
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.name,
-      lastName: user.lname,
-      phone: user.phone,
-    };
+    return SUCCESS_MESSAGES.PASSWORD_CHANGED;
   }
 
   private async checkOldPasswordOrFail(
@@ -69,7 +62,7 @@ export class UsersService {
     );
 
     if (!isOldPasswordCorrect) {
-      throw new UnauthorizedException(ERROR_MESSAGES.WRONG_OLD_PASSWORD);
+      throw new BadRequestException(ERROR_MESSAGES.WRONG_OLD_PASSWORD);
     }
   }
 

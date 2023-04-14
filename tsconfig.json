@@ -20,6 +20,7 @@
     "paths": {
       "@schemas/*": ["src/common/schemas/*"],
       "@dtos/*": ["src/common/dtos/*"],
+      "@daos/*": ["src/common/daos/*"],
       "@consts/*": ["src/common/constants/*"],
       "@helpers/*": ["src/common/helpers/*"],
       "@interceptors/*": ["src/common/interceptors/*"]

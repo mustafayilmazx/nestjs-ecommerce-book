@@ -1,4 +1,4 @@
-import { CreateAddressDto, UpdateAddressDto } from '@dtos/address';
+import { CreateAddressDto, UpdateAddressDto } from '@dtos/index';
 import {
   Body,
   Controller,

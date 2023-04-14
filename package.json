@@ -81,6 +81,7 @@
     "moduleNameMapper": {
       "^@schemas(.*)$": "/src/common/schemas/$1",
       "^@dtos/(.*$)": "/src/common/dtos/$1",
+      "^@daos/(.*$)": "/src/common/daos/$1",
       "^@consts/(.*$)": "/src/common/contants/$1",
       "^@helpers/(.*$)": "/src/common/helpers/$1",
       "^@interceptors/(.*$)": "/src/common/interceptors/$1"

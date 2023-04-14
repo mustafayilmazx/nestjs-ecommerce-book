@@ -1,11 +1,10 @@
-import { AddProductToCartDto } from '@dtos/cart/add-product.dto';
+import { CartDao, CartItemDao } from '@daos/index';
+import { AddProductToCartDto } from '@dtos/index';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cart } from '@schemas/cart/cart.schema';
 import { Product } from '@schemas/products';
 import { Model } from 'mongoose';
-import { CartItemDao } from 'src/common/daos/cart-item.dao';
-import { CartDao } from 'src/common/daos/cart.dao';
 import { ProductService } from '../products/products.service';
 
 @Injectable()
