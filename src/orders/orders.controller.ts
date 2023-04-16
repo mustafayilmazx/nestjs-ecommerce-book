@@ -1,4 +1,5 @@
 import { CreateOrderDto, UpdateOrderDto } from '@dtos/index';
+import { PaginationDto } from '@dtos/pagination/pagination.dto';
 import {
   Body,
   Controller,
@@ -7,21 +8,30 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { OrdersService } from './orders.service';
 
-@Controller('orders')
+@Controller('order')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
+  @UseGuards(AuthGuard('jwt'))
+  create(@Body() createOrderDto: CreateOrderDto, @Req() req) {
+    return this.ordersService.create(createOrderDto, req.user);
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  findAll(
+    @Req() req,
+    @Query() query: PaginationDto,
+  ) {
+    return this.ordersService.findAll(req.user, query);
   }
 
   @Get(':id')

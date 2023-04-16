@@ -1,25 +1,8 @@
 import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  ValidateNested,
+  IsMongoId
 } from 'class-validator';
 
 export class CreateOrderDto {
-  @IsNotEmpty()
-  @IsNumber()
-  totalPrice: number;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  address: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  products: string[];
-
-  @IsOptional()
-  @IsEnum(['pending', 'paid', 'shipped', 'delivered'])
-  status: string;
+  @IsMongoId()
+  addressId: string;
 }

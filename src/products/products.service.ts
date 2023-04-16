@@ -20,6 +20,14 @@ export class ProductService {
     return product;
   }
 
+  public async search(query: string): Promise<Product[]> {
+    const products = await this.productModel.find({
+      $text: { $search: query },
+    });
+
+    return products;
+  }
+
   public async getMany(productIds: string[]): Promise<Product[]> {
     const products = await this.productModel.find({
       _id: { $in: productIds },

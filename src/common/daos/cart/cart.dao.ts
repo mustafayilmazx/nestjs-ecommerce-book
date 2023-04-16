@@ -7,5 +7,5 @@ export class CartDao {
 
   @Expose()
   @Type(() => CartItemDao)
-  items: CartItemDao[];
+  products: CartItemDao[];
 }

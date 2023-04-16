@@ -5,4 +5,5 @@ export const ERROR_MESSAGES = {
   USER_NOT_FOUND: 'User not found',
   USER_ALREADY_EXISTS: 'User already exists',
   PRODUCT_NOT_FOUND: 'Product not found',
+  PRODUCT_NOT_IN_CART: 'Product is not in cart',
 };

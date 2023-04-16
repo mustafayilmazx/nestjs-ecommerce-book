@@ -1,6 +1,7 @@
+import { ERROR_MESSAGES } from '@consts/error-messages';
 import { CartDao, CartItemDao } from '@daos/index';
 import { AddProductToCartDto } from '@dtos/index';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cart } from '@schemas/cart/cart.schema';
 import { Product } from '@schemas/products';
@@ -24,19 +25,39 @@ export class CartService {
     if (cart) {
       cart.quantity += quantity;
       await cart.save();
-      return;
+    } else {
+      await this.cartModel.create({
+        ownerId: user.userId,
+        productName: product.title,
+        productId,
+        quantity,
+      });
     }
 
-    await this.cartModel.create({
-      ownerId: user.userId,
-      productName: product.title,
-      productId,
-      quantity,
-    });
+    return this.getCartByUser(user);
+  }
+
+  public async updateProductQuantity(
+    { productId, quantity }: AddProductToCartDto,
+    user,
+  ) {
+    const cart = await this.getCart(user.userId, productId);
+
+    if (cart) {
+      cart.quantity = quantity;
+      await cart.save();
+      return this.getCartByUser(user);
+    }
+
+    throw new BadRequestException(ERROR_MESSAGES.PRODUCT_NOT_IN_CART);
   }
 
   public async removeProductFromCart(productId: string, user) {
-    return this.cartModel.deleteOne({ ownerId: user.userId, productId }).exec();
+    await this.cartModel.deleteOne({ ownerId: user.userId, productId }).exec();
+  }
+
+  public async clearCart(user) {
+    await this.cartModel.deleteMany({ ownerId: user.userId }).exec();
   }
 
   public async getCartByUser(user): Promise<CartDao> {
@@ -49,7 +70,7 @@ export class CartService {
     const products = await this.productService.getMany(productIds);
     const { items, totalPrice } = this.mapCartItems(cart, products);
 
-    return { totalPrice, items };
+    return { totalPrice, products: items };
   }
 
   private async getCart(userId: string, productId: string) {

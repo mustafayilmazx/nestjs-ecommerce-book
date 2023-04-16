@@ -1,3 +1,4 @@
+import { TokenDao } from '@daos/index';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -27,7 +28,8 @@ export class AuthService {
     };
   }
 
-  async login(user: User) {
+  async login(user: User): Promise<TokenDao> {
+
     const payload = { userId: user._id.toString(), email: user.email };
     return {
       access_token: await this.jwtService.sign(payload),
