@@ -32,7 +32,6 @@ export class ProductService {
       return obj;
     }, {});
     const builtQuery = await this.queryBuilder(query);
-
     return this.findAll(builtQuery, page);
   }
 
@@ -59,16 +58,16 @@ export class ProductService {
 
       builtQuery.push(fieldQueryBuilder(filters[filterKey]));
     }
-    console.log(builtQuery);
     return builtQuery;
   }
 
   private async findAll(filters, page) {
     const limit = 10;
     const skip = (page - 1) * limit;
+    const finalFilters = filters.length ? { $and: filters } : {};
 
     return this.productModel.find(
-      { $and: filters },
+      finalFilters,
       { __v: 0 },
       { skip, limit });
   }
