@@ -15,9 +15,9 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    AuthModule,
     UsersModule,
     AddressModule,
-    AuthModule,
     ProductsModule,
     CartModule,
     OrdersModule,

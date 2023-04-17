@@ -1,6 +1,6 @@
 import { ERROR_MESSAGES } from '@consts/error-messages';
 import { CartDao, CartItemDao } from '@daos/index';
-import { AddProductToCartDto } from '@dtos/index';
+import { CreateCartItemDto } from '@dtos/index';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cart } from '@schemas/cart/cart.schema';
@@ -15,10 +15,7 @@ export class CartService {
     private readonly productService: ProductService,
   ) {}
 
-  public async addProductToCart(
-    { productId, quantity }: AddProductToCartDto,
-    user,
-  ) {
+  public async addProductToCart({ productId, quantity }: CreateCartItemDto, user): Promise<CartDao> {
     const product = await this.productService.getOneOrFail(productId);
     const cart = await this.getCart(user.userId, productId);
 
@@ -37,10 +34,7 @@ export class CartService {
     return this.getCartByUser(user);
   }
 
-  public async updateProductQuantity(
-    { productId, quantity }: AddProductToCartDto,
-    user,
-  ) {
+  public async updateProductQuantity({ productId, quantity }: CreateCartItemDto, user) {
     const cart = await this.getCart(user.userId, productId);
 
     if (cart) {
@@ -53,11 +47,11 @@ export class CartService {
   }
 
   public async removeProductFromCart(productId: string, user) {
-    await this.cartModel.deleteOne({ ownerId: user.userId, productId }).exec();
+    await this.cartModel.deleteOne({ ownerId: user.userId, productId });
   }
 
   public async clearCart(user) {
-    await this.cartModel.deleteMany({ ownerId: user.userId }).exec();
+    await this.cartModel.deleteMany({ ownerId: user.userId });
   }
 
   public async getCartByUser(user): Promise<CartDao> {

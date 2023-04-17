@@ -12,6 +12,10 @@ async function bootstrap() {
     .setDescription('The BookLand API description')
     .setVersion('1.0')
     .addTag('bookland')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'authorization',
+      )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

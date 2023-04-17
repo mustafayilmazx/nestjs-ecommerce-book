@@ -1,4 +1,4 @@
-import { CreateOrderDto, UpdateOrderDto } from '@dtos/index';
+import { CreateOrderDto } from '@dtos/index';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Order } from '@schemas/index';
@@ -13,10 +13,6 @@ export class OrdersService {
     private readonly addressService: AddressService,
     private readonly cartService: CartService,
   ) {}
-
-  public async createOrder(createOrderDto: CreateOrderDto) {
-    return 'This action adds a new order';
-  }
 
   public async create({ addressId }: CreateOrderDto, user) {
     const [{ _id, ownerId, ...address }, cart] = await Promise.all([
@@ -39,8 +35,6 @@ export class OrdersService {
     this.cartService.clearCart(user),
     this.orderModel.create(payload),
   ]);
-
-  return;
 }
 
 
@@ -53,17 +47,5 @@ export class OrdersService {
       { __v: 0 , ownerId: 0, 'orderAddress._id': 0},
       { skip, limit },
     );
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
-
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} order`;
   }
 }

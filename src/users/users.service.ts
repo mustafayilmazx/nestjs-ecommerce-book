@@ -1,4 +1,5 @@
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@consts/index';
+import { MessageDao } from '@daos/common';
 import { ChangePasswordDto, CreateUserDto } from '@dtos/index';
 import { comparePasswords, hashPassword } from '@helpers/password-helper';
 import {
@@ -15,7 +16,7 @@ import { Model } from 'mongoose';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  public async createUser(createUserDto: CreateUserDto): Promise<string> {
+  public async createUser(createUserDto: CreateUserDto): Promise<MessageDao> {
     const { email, password } = createUserDto;
 
     if (await this.isUserExist(email)) {
@@ -29,19 +30,15 @@ export class UsersService {
       password: hashedPassword,
     });
 
-    return SUCCESS_MESSAGES.USER_CREATED;
+    return { message : SUCCESS_MESSAGES.USER_CREATED};
   }
 
   public async changePassword(
     changePasswordDto: ChangePasswordDto,
     { userId },
-  ): Promise<string> {
+  ): Promise<MessageDao> {
     const { oldPassword, newPassword } = changePasswordDto;
     const user = await this.getOneById(userId);
-
-    if (!user) {
-      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
-    }
 
     await this.checkOldPasswordOrFail(oldPassword, user.password);
 
@@ -49,7 +46,7 @@ export class UsersService {
     user.password = hashedPassword;
     await user.save();
 
-    return SUCCESS_MESSAGES.PASSWORD_CHANGED;
+    return { message: SUCCESS_MESSAGES.PASSWORD_CHANGED};
   }
 
   private async checkOldPasswordOrFail(
