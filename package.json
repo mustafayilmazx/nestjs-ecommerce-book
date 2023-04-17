@@ -28,6 +28,7 @@
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/swagger": "^6.3.0",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -81,7 +82,10 @@
     "moduleNameMapper": {
       "^@schemas(.*)$": "/src/common/schemas/$1",
       "^@dtos/(.*$)": "/src/common/dtos/$1",
-      "^@helpers/(.*$)": "/src/common/helpers/$1"
+      "^@daos/(.*$)": "/src/common/daos/$1",
+      "^@consts/(.*$)": "/src/common/contants/$1",
+      "^@helpers/(.*$)": "/src/common/helpers/$1",
+      "^@interceptors/(.*$)": "/src/common/interceptors/$1"
     }
   }
 }

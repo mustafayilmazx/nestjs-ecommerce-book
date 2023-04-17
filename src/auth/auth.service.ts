@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ERROR_MESSAGES } from '@consts/index';
+import { TokenDao } from '@daos/index';
+import { LoginDto } from '@dtos/auth';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '@schemas/user';
@@ -21,14 +24,21 @@ export class AuthService {
   }
 
   async createToken(user: User): Promise<{ access_token: string }> {
-    const payload = { userId: user._id, email: user.email };
+    const payload = { userId: user._id.toString(), email: user.email };
     return {
       access_token: await this.jwtService.sign(payload),
     };
   }
 
-  async login(user: User) {
-    const payload = { userId: user._id, email: user.email };
+  async login(loginDto: LoginDto): Promise<TokenDao> {
+    const { email, password } = loginDto;
+    const user = await this.validateUser(email, password);
+
+    if (!user) {
+      throw new UnauthorizedException(ERROR_MESSAGES.WRONG_EMAIL_OR_PASSWORD);
+    }
+
+    const payload = { userId: user._id.toString(), email: user.email };
     return {
       access_token: await this.jwtService.sign(payload),
     };

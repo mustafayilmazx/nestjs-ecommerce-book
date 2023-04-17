@@ -7,17 +7,21 @@ import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { DatabaseModule } from './database/database.module';
 import { OrdersModule } from './orders/orders.module';
+import { ProductsModule } from './products/products.module';
+import { SeederModule } from './seeder/seeder.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    UsersModule,
-    OrdersModule,
-    AddressModule,
-    AuthModule,
-    CartModule,
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    AuthModule,
+    UsersModule,
+    AddressModule,
+    ProductsModule,
+    CartModule,
+    OrdersModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],

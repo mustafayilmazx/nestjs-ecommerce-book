@@ -11,9 +11,11 @@ import { LocalStrategy } from './strategies/local.strategy';
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRE },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: process.env.JWT_EXPIRE },
+      }),
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],

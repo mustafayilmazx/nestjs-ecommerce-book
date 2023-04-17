@@ -1,3 +1,4 @@
+import { ERROR_MESSAGES } from '@consts/error-messages';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
@@ -12,7 +13,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(email: string, password: string): Promise<any> {
     const user = await this.authService.validateUser(email, password);
     if (!user) {
-      throw new UnauthorizedException('Wrong email or password');
+      throw new UnauthorizedException(ERROR_MESSAGES.WRONG_EMAIL_OR_PASSWORD);
     }
     return user;
   }

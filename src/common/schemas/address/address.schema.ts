@@ -6,7 +6,15 @@ import { Document } from 'mongoose';
 export class Address extends Document {
   @Prop({ required: true })
   @IsString()
-  addressLine: string;
+  name: string;
+
+  @Prop({ required: true })
+  @IsString()
+  surname: string;
+
+  @Prop({ required: true })
+  @IsNumber()
+  phone: string;
 
   @Prop({ required: true })
   @IsString()
@@ -22,19 +30,11 @@ export class Address extends Document {
 
   @Prop({ required: true })
   @IsNumber()
-  phone: string;
-
-  @Prop({ required: true })
-  @IsNumber()
   postalCode: string;
 
   @Prop({ required: true })
   @IsString()
-  name: string;
-
-  @Prop({ required: true })
-  @IsString()
-  surname: string;
+  addressLine: string;
 
   @Prop({ required: true })
   @IsString()

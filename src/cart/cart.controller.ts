@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ERROR_MESSAGES } from '@consts/index';
+import { CartDao, MessageDao } from '@daos/index';
+import { CreateCartItemDto } from '@dtos/index';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { CartService } from './cart.service';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Controller('cart')
+@ApiTags('Cart')
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth('authorization')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @ApiNotFoundResponse({ description: ERROR_MESSAGES.PRODUCT_NOT_FOUND, type: MessageDao })
+  @ApiCreatedResponse({ description: 'Product added to cart', type: CartDao })
   @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  public async create(@Body() createCartItemDto: CreateCartItemDto, @Req() req): Promise<CartDao> {
+    return this.cartService.addProductToCart(createCartItemDto, req.user);
   }
 
+  @ApiOkResponse({ description: 'Cart returned', type: CartDao })
   @Get()
-  findAll() {
-    return this.cartService.findAll();
+  public async getCart(@Req() req): Promise<CartDao> {
+    return this.cartService.getCartByUser(req.user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
-    return this.cartService.update(+id, updateCartDto);
+  @ApiOkResponse({ description: 'Product quantity updated', type: CartDao })
+  @ApiNotFoundResponse({ description: ERROR_MESSAGES.PRODUCT_NOT_IN_CART, type: MessageDao })
+  @Patch()
+  public async updateCart(@Body() createCartItemDto: CreateCartItemDto, @Req() req): Promise<CartDao> {
+    return this.cartService.updateProductQuantity(createCartItemDto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  @HttpCode(204)
+  public async deleteCart(@Param('id') productId, @Req() req) {
+    return this.cartService.removeProductFromCart(productId, req.user);
+  }
+
+  @Delete()
+  @HttpCode(204)
+  public async clearCart(@Req() req) {
+    return this.cartService.clearCart(req.user);
   }
 }
+
+

@@ -1,14 +1,23 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { TokenDao } from '@daos/index';
+import { LoginDto } from '@dtos/auth';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ApiCreatedResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
+  @ApiCreatedResponse({
+    description: 'The user has been successfully logged in.',
+    type: TokenDao,
+   })
+  @ApiUnauthorizedResponse({
+    description: 'Wrong email or password.',
+  })
   @Post('/login')
-  async login(@Request() req) {
-    return await this.authService.login(req.user);
+  async login(@Body() loginDto: LoginDto): Promise<TokenDao> {
+    return await this.authService.login(loginDto);
   }
 }

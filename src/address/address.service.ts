@@ -1,6 +1,6 @@
-import { ERROR_MESSAGES } from '@consts/error-messages';
-import { CreateAddressDto, UpdateAddressDto } from '@dtos/address';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ERROR_MESSAGES } from '@consts/index';
+import { CreateAddressDto, UpdateAddressDto } from '@dtos/index';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Address } from '@schemas/address';
 import { Model } from 'mongoose';
@@ -26,7 +26,9 @@ export class AddressService {
     return this.addressModel.find({
       ownerId: user.userId,
       isDeleted: { $exists: false },
-    });
+    },
+    { __v: 0 },
+    );
   }
 
   public async update(updateAddressDto: UpdateAddressDto, addressId, user) {
@@ -47,28 +49,18 @@ export class AddressService {
     return this.updateOne(filters, update);
   }
 
-  private async getOne(addressId, user) {
-    return this.addressModel.findOne({ _id: addressId, ownerId: user.userId });
+  public async getActiveOneOrFail(addressId, user) {
+    return this.getOneOrFail(addressId, user, { isDeleted: { $exists: false } });
   }
 
-  private async getOneOrFail(addressId, user) {
-    const address = await this.getOne(addressId, user);
+  private async getOne(addressId, user, filters = {}) {
+    return this.addressModel.findOne({ _id: addressId, ownerId: user.userId, ...filters }, { __v: 0 });
+  }
+
+  private async getOneOrFail(addressId, user, filters = {}) {
+    const address = await this.getOne(addressId, user, filters);
     if (!address) {
-      throw new HttpException(
-        ERROR_MESSAGES.ADDRESS_NOT_FOUND,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return address;
-  }
-
-  private async getActiveOneOrFail(addressId, user) {
-    const address = await this.getOne(addressId, user);
-    if (!address || address.isDeleted) {
-      throw new HttpException(
-        ERROR_MESSAGES.ADDRESS_NOT_FOUND,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundException(ERROR_MESSAGES.ADDRESS_NOT_FOUND);
     }
     return address;
   }
