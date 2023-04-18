@@ -46,6 +46,7 @@ export class OrdersService {
       { ownerId },
       { __v: 0 , ownerId: 0, 'orderAddress._id': 0},
       { skip, limit },
-    );
+    )
+    .sort({ orderDate: -1 });
   }
 }
